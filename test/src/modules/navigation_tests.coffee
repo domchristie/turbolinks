@@ -39,6 +39,14 @@ navigationTest "following a same-origin data-turbolinks=true link inside a data-
     assert.equal(navigation.action, "push")
     done()
 
+navigationTest "following a same-page anchored link", (assert, session, done) ->
+  session.clickSelector "#same-page-anchored-link", (navigation) ->
+    assert.equal(navigation.location.pathname, "/fixtures/navigation.html")
+    assert.equal(navigation.location.hash, "#element-id")
+    assert.equal(navigation.action, "pop")
+    assert.scrolledTo(session.element.document.querySelector(navigation.location.hash))
+    done()
+
 navigationTest "following a same-origin anchored link", (assert, session, done) ->
   session.clickSelector "#same-origin-anchored-link", (navigation) ->
     session.waitForEvent "turbolinks:load", ->
