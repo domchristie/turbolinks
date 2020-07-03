@@ -3,7 +3,7 @@ import { array } from "./util"
 export type RenderCallback = () => void
 
 export interface RenderDelegate {
-  viewWillRender(newBody: HTMLBodyElement): void
+  applicationAllowsImmediateRendering(newBody: HTMLBodyElement, render:() => void): boolean
   viewRendered(newBody: HTMLBodyElement): void
   viewInvalidated(): void
 }
@@ -13,9 +13,14 @@ export abstract class Renderer {
   abstract newBody: HTMLBodyElement
 
   renderView(callback: RenderCallback) {
-    this.delegate.viewWillRender(this.newBody)
-    callback()
-    this.delegate.viewRendered(this.newBody)
+    new Promise((resolve:() => void) => {
+      if (this.delegate.applicationAllowsImmediateRendering(this.newBody, resolve)) {
+        resolve()
+      }
+    }).then(() => {
+      callback()
+      this.delegate.viewRendered(this.newBody)
+    })
   }
 
   invalidateView() {

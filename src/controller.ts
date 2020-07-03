@@ -186,10 +186,6 @@ export class Controller {
     this.adapter.pageInvalidated()
   }
 
-  viewWillRender(newBody: HTMLBodyElement) {
-    this.notifyApplicationBeforeRender(newBody)
-  }
-
   viewRendered() {
     this.lastRenderedLocation = this.currentVisit!.location
     this.notifyApplicationAfterRender()
@@ -233,6 +229,11 @@ export class Controller {
     return !event.defaultPrevented
   }
 
+  applicationAllowsImmediateRendering(newBody: HTMLBodyElement, render:() => void) {
+    const event = this.notifyApplicationBeforeRender(newBody, render)
+    return !event.defaultPrevented
+  }
+
   notifyApplicationAfterClickingLinkToLocation(link: Element, location: Location) {
     return dispatch("turbolinks:click", { target: link, data: { url: location.absoluteURL }, cancelable: true })
   }
@@ -249,8 +250,8 @@ export class Controller {
     return dispatch("turbolinks:before-cache")
   }
 
-  notifyApplicationBeforeRender(newBody: HTMLBodyElement) {
-    return dispatch("turbolinks:before-render", { data: { newBody }})
+  notifyApplicationBeforeRender(newBody: HTMLBodyElement, render:() => void) {
+    return dispatch("turbolinks:before-render", { data: { newBody, render }, cancelable: true})
   }
 
   notifyApplicationAfterRender() {
