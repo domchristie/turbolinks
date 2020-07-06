@@ -178,8 +178,8 @@ export class Controller {
 
   // View
 
-  render(options: Partial<RenderOptions>, callback: RenderCallback) {
-    this.view.render(options, callback)
+  render(options: Partial<RenderOptions>, callback: RenderCallback):Promise<void> {
+    return this.view.render(options, callback)
   }
 
   viewInvalidated() {

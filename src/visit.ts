@@ -122,9 +122,9 @@ export class Visit {
     const snapshot = this.getCachedSnapshot()
     if (snapshot) {
       const isPreview = this.shouldIssueRequest()
-      this.render(() => {
+      this.render(async () => {
         this.cacheSnapshot()
-        this.controller.render({ snapshot, isPreview }, this.performScroll)
+        await this.controller.render({ snapshot, isPreview }, this.performScroll)
         this.adapter.visitRendered(this)
         if (!isPreview) {
           this.complete()
@@ -136,14 +136,14 @@ export class Visit {
   loadResponse() {
     const { request, response } = this
     if (request && response) {
-      this.render(() => {
+      this.render(async () => {
         this.cacheSnapshot()
         if (request.failed) {
-          this.controller.render({ error: this.response }, this.performScroll)
+          await this.controller.render({ error: this.response }, this.performScroll)
           this.adapter.visitRendered(this)
           this.fail()
         } else {
-          this.controller.render({ snapshot: Snapshot.fromHTMLString(response) }, this.performScroll)
+          await this.controller.render({ snapshot: Snapshot.fromHTMLString(response) }, this.performScroll)
           this.adapter.visitRendered(this)
           this.complete()
         }

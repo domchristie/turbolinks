@@ -12,8 +12,8 @@ export abstract class Renderer {
   abstract delegate: RenderDelegate
   abstract newBody: HTMLBodyElement
 
-  renderView(callback: RenderCallback) {
-    new Promise((resolve:() => void) => {
+  renderView(callback: RenderCallback):Promise<void> {
+    return new Promise((resolve:() => void) => {
       if (this.delegate.applicationAllowsImmediateRendering(this.newBody, resolve)) {
         resolve()
       }
