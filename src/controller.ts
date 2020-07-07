@@ -242,8 +242,8 @@ export class Controller {
     return dispatch("turbolinks:before-visit", { data: { url: location.absoluteURL }, cancelable: true })
   }
 
-  notifyApplicationAfterVisitingLocation(location: Location) {
-    return dispatch("turbolinks:visit", { data: { url: location.absoluteURL } })
+  notifyApplicationAfterVisitingLocation(location: Location, action: Action) {
+    return dispatch("turbolinks:visit", { data: { url: location.absoluteURL, action } })
   }
 
   notifyApplicationBeforeCachingSnapshot() {
@@ -270,7 +270,7 @@ export class Controller {
     }
     this.currentVisit = this.createVisit(location, action, properties)
     this.currentVisit.start()
-    this.notifyApplicationAfterVisitingLocation(location)
+    this.notifyApplicationAfterVisitingLocation(location, this.currentVisit.action)
   }
 
   createVisit(location: Location, action: Action, properties: Partial<VisitProperties>): Visit {
